@@ -10,7 +10,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from PIL import Image
 
 st.set_page_config(page_title="Poster Frames PPT", layout="wide")
-st.title("📊 Poster Frames POP PPT Generator")
+st.title("📊 Poster Frames Lucknow POP PPT Generator")
 
 # -------------------------
 # Google Drive Authentication
