@@ -36,7 +36,7 @@ def extract_folder_id(link):
 
 
 # -------------------------
-# Get Subfolders (Pagination supported)
+# Get Subfolders
 # -------------------------
 def get_subfolders(service, parent_id):
 
@@ -106,12 +106,16 @@ def download_image(service, file_id):
 
 
 # -------------------------
-# Resize Image (prevents memory crash)
+# Optimize + Rotate Image
 # -------------------------
 def optimize_image(image_stream):
 
     img = Image.open(image_stream)
 
+    # ✅ Rotate 90° clockwise
+    img = img.rotate(-90, expand=True)
+
+    # Resize (prevents memory issues)
     img.thumbnail((1500, 1500))
 
     output = io.BytesIO()
@@ -137,7 +141,6 @@ generate_btn = st.button("🚀 Generate Presentation")
 if generate_btn:
 
     if not campaign_input or not drive_link:
-
         st.warning("Please fill all fields")
         st.stop()
 
@@ -151,7 +154,6 @@ if generate_btn:
         subfolders = get_subfolders(service, main_folder_id)
 
         if not subfolders:
-
             st.error("No subfolders found")
             st.stop()
 
@@ -178,7 +180,6 @@ if generate_btn:
 
         progress = st.progress(0)
         slide_count = 0
-
         total_images = 0
 
         for folder in subfolders:
@@ -254,7 +255,6 @@ if generate_btn:
                 for idx, img in enumerate(slide_images):
 
                     try:
-
                         img_stream = download_image(service, img["id"])
                         optimized = optimize_image(img_stream)
 
@@ -280,7 +280,7 @@ if generate_btn:
                         processed += 1
                         progress.progress(processed / total_images)
 
-                    except Exception as e:
+                    except Exception:
                         st.warning(f"Skipping image: {img['name']}")
 
         # Save PPT
@@ -298,5 +298,4 @@ if generate_btn:
         )
 
     except Exception as e:
-
         st.error(f"Error: {str(e)}")
